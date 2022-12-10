@@ -57,7 +57,7 @@ api.joinProject =  async function() {
   if (res.ok) {
     return true;
   } else {
-    throw Error('Failed to create new project');
+    throw Error('Failed to join the project');
   }
 }
 
@@ -73,9 +73,61 @@ api.newresource = async function(data) {
   if (res.ok) {
     const parts = location.href.split('/');
     parts.pop();
-    parts.pop();
     location.href = parts.join('/') + '/resource/' + id;
   } else {
-    throw Error('Failed to create new project');
+    throw Error('Failed to create a new resource');
+  }
+}
+
+
+api.newPost = async function(data) {
+  const res = await fetch('/api/createpost', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  const {id} = await res.json();
+  if (res.ok) {
+    const parts = location.href.split('/');
+    parts.pop();
+    location.href = parts.join('/') + '/post/' + id;
+  } else {
+    throw Error('Failed to create a new post');
+  }
+}
+
+api.newReply = async function(data) {
+  const res = await fetch('/api/replypost', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  const {id} = await res.json();
+  if (res.ok) {
+    location.reload();
+  } else {
+    throw Error('Failed to create a new reply');
+  }
+}
+
+api.newQuestion = async function(data) {
+  const res = await fetch('/api/createquestion', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  const {id} = await res.json();
+  if (res.ok) {
+    const parts = location.href.split('/');
+    parts.pop();
+    location.href = parts.join('/') + '/question/' + id;
+  } else {
+    throw Error('Failed to create a new question');
   }
 }

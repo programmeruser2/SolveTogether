@@ -9,3 +9,5 @@ async function joinProject() {
 }
 
 document.getElementById('newresource').href = location.href + '/newresource';
+document.getElementById('newpost').href = location.href + '/newpost';
+document.getElementById('newquestion').href = location.href + '/newquestion';

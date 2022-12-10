@@ -10,8 +10,8 @@ form.addEventListener('submit', async e => {
   data.projectId = Number(parts.at(-1));
   //console.log(data);
   try {
-    await api.newresource(data);
+    await api.newPost(data);
   } catch (err) {
-    errText.innerText = 'Failed to create a new resource';
+    errText.innerText = 'Failed to create a new post';
   }
 });

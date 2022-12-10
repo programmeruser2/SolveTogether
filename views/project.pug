@@ -5,14 +5,26 @@ block content
   h1 Project #{name}
   p= description
   br
-  if !inProject
+  if (!inProject) && authed
     button(onclick='joinProject()') Join Project
   div#success-text
   div#err-text
 
   h2 Resources
   a#newresource New Resource
+  ul#resources
+    each resource in resources
+      li.resourceitem
+        div 
+          a(href=resource.url) #{resource.title}
 
   h2 Questions
+  a#newquestion New Question
 
   h2 Message Board
+  a#newpost New Post
+  ul#posts
+    each post in posts
+      li.postitem
+        div 
+          a(href=post.url) #{post.title}

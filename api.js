@@ -110,9 +110,9 @@ router.post('/newproject', requireAuth, async (req, res) => {
   await client.set('PROJECT_DESC_'+id, description);
   await client.set('PROJECT_MEMBERS_'+id, [req.session.user]);
   
-  await client.set('PROJECT_RESOURCES', []);
-  await client.set('PROJECT_MESSAGES', []);
-  await client.set('PROJECT_QUESTIONS', []);
+  await client.set('PROJECT_RESOURCES_'+id, []);
+  await client.set('PROJECT_MESSAGES_'+id, []);
+  await client.set('PROJECT_QUESTIONS_'+id, []);
 
   const projs = await client.get('USER_PROJECTS_'+req.session.user);
   projs.push(id);
@@ -154,16 +154,106 @@ router.post('/joinproject', requireAuth, async (req,res) => {
 
 // Resources API
 router.post('/makeresource', requireAuth, async (req, res) => {
-  // Input: JSON {title:<title>,text:<text>}
+  // Input: JSON {title:<title>,text:<text>,projectId:<projectId>}
   // Output: status, id
-  const {title,text} = req.body;
+  const {title,text,projectId} = req.body;
   let id = await client.get('CURRENT_RESOURCE_ID');
   if (id == null) id = 0;
   await client.set('CURRENT_RESOURCE_ID', id+1);
   await client.set('RESOURCE_TITLE_' + id, title);
   await client.set('RESOURCE_TEXT_' + id, text);
+  await client.set('RESOURCE_AUTHOR_' + id, req.session.user);
+
+  const reses = await client.get('PROJECT_RESOURCES_'+projectId);
+  reses.push(id);
+  await client.set('PROJECT_RESOURCES_'+projectId, reses);
+  
   return res.status(200).send({status:'OK', id: id});
 });
 
+// Message Board API
+// Create Post
+router.post('/createpost', requireAuth, async (req, res) => {
+  // Input: JSON {title:<title>,text:<text>,projectId:<projectId>}
+  // Output: status, id
+  const {title,text,projectId} = req.body;
+  let id = await client.get('CURRENT_POST_ID');
+  if (id == null) id = 0;
+  await client.set('CURRENT_POST_ID', id+1);
+  await client.set('POST_TITLE_' + id, title);
+  await client.set('POST_TEXT_' + id, text);
+  await client.set('POST_AUTHOR_' + id, req.session.user);
+  await client.set('POST_REPLIES_'+id, []);
+
+  const reses = await client.get('PROJECT_MESSAGES_'+projectId);
+  reses.push(id);
+  await client.set('PROJECT_MESSAGES_'+projectId, reses);
+  
+  return res.status(200).send({status:'OK', id: id});
+});
+router.post('/replypost', requireAuth, async (req, res) => {
+  // Input: JSON {text:<text>,postId:<postId>}
+  // Output: status
+  const {text,postId} = req.body;
+  let id = await client.get('CURRENT_REPLY_ID');
+  if (id == null) id = 0;
+  await client.set('CURRENT_REPLY_ID', id+1);
+  await client.set('REPLY_TEXT_' + id, text);
+  await client.set('REPLY_AUTHOR_' + id, req.session.user);
+
+  const reses = await client.get('POST_REPLIES_'+postId);
+  reses.push(id);
+  await client.set('POST_REPLIES_'+postId, reses);
+  
+  return res.status(200).send({status:'OK'});
+});
+
+// Questions API
+// Actions: Create, comment, open, close a question
+// Create Post
+router.post('/createquestion', requireAuth, async (req, res) => {
+  // Input: JSON {title:<title>,text:<text>,projectId:<projectId>}
+  // Output: status, id
+  const {title,text,projectId} = req.body;
+  let id = await client.get('CURRENT_QUESTION_ID');
+  if (id == null) id = 0;
+  await client.set('CURRENT_QUESTION_ID', id+1);
+  await client.set('QUESTION_TITLE_' + id, title);
+  await client.set('QUESTION_TEXT_' + id, text);
+  await client.set('QUESTION_AUTHOR_' + id, req.session.user);
+  await client.set('QUESTION_REPLIES_'+id, []);
+
+  const reses = await client.get('PROJECT_QUESTIONS_'+projectId);
+  reses.push(id);
+  await client.set('PROJECT_QUESTIONS_'+projectId, reses);
+  
+  return res.status(200).send({status:'OK', id: id});
+});
+router.post('/replyquestion', requireAuth, async (req, res) => {
+  // Input: JSON {text:<text>,postId:<postId>}
+  // Output: status
+  const {text,postId} = req.body;
+  let id = await client.get('CURRENT_REPLY_ID');
+  if (id == null) id = 0;
+  await client.set('CURRENT_REPLY_ID', id+1);
+  await client.set('REPLY_TEXT_' + id, text);
+  await client.set('REPLY_AUTHOR_' + id, req.session.user);
+
+  const reses = await client.get('QUESTIONS_REPLIES_'+postId);
+  reses.push(id);
+  await client.set('QUESTION_REPLIES_'+postId, reses);
+  
+  return res.status(200).send({status:'OK'});
+});
+router.post('/openquestion', requireAuth, async (req, res) => {
+  const {questionId} = req.body;
+  await client.set('QUESTION_STATE_'+questionId, true);
+  return res.status(200).send({status:'OK'});
+});
+router.post('/closequestion', requireAuth, async (req, res) => {
+  const {questionId} = req.body;
+  await client.set('QUESTION_STATE_'+questionId, false);
+  return res.status(200).send({status:'OK'});
+});
 
 module.exports = router;

@@ -1,0 +1,23 @@
+extends layout.pug
+block append scripts
+  script(src='/static/js/post.js', defer='')
+block content
+  h1= project
+  h2= ptitle
+  p= text
+  h6 By: #{author}
+  hr
+  //h1 Test
+  each post in posts
+    p= post.text
+    h6 By: #{post.author}
+    hr
+  //h1 Test
+  // Reply Box
+  if authed
+    h3 Reply
+    form#form
+      textarea(form='form', name='text', placeholder='Post Text')
+      br
+      input(type='submit', value='New Post')
+    div#err-text

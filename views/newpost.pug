@@ -1,0 +1,12 @@
+extends layout 
+block append scripts
+  script(src='/static/js/newpost.js', defer='')
+block content
+  h1 New Post
+  form#form
+    input(type='text', name='title', placeholder='Post Title') 
+    br
+    textarea(form='form', name='text', placeholder='Post Text')
+    br
+    input(type='submit', value='New Post')
+  div#err-text

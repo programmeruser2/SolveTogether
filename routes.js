@@ -30,8 +30,11 @@ router.get('/myprojects', requireAuth, async (req,res) => {
 });
 router.get('/project/:id', async (req, res) => {
   const id = Number(req.params.id);
+  if (!(Number.isInteger(id) && id >= 0)) {
+    return res.status(404).render('404', {msg:'Project does not exist.'});
+  }
   const name=await client.get('PROJECT_NAME_'+id);
-  const description=await client.get('PROJECT_DESC_'+id)
+  const description=await client.get('PROJECT_DESC_'+id);
   let inProject = false;
   //console.log(await client.get('USER_PROJECTS_'+req.session.user));
   //console.log('before auth check');
@@ -44,13 +47,109 @@ router.get('/project/:id', async (req, res) => {
       inProject = true;
     }
   }
-  if (!(Number.isInteger(id) && id >= 0)) {
-    return res.status(404).render('404', {msg:'Project does not exist.'});
+  
+  const resourceIds = await client.get('PROJECT_RESOURCES_'+id);
+  const resources = [];
+  for (const resource of resourceIds) {
+    resources.push({
+      id: resource,
+      title: await client.get('RESOURCE_TITLE_'+resource),
+      url: '/project/'+id+'/resource/'+resource
+    });
   }
+
+  const postIds = await client.get('PROJECT_MESSAGES_'+id);
+  const posts = [];
+  for (const post of postIds) {
+    posts.push({
+      id: post,
+      title: await client.get('POST_TITLE_'+post),
+      url: '/project/'+id+'/post/'+post
+    });
+  }
+  
   //console.log(inProject);
-  res.render('project', {title: 'Project '+name, authed:req.authed, 
-                        name:name,description:description,inProject:inProject});
+  res.render('project', {
+    title: 'Project '+name, authed:req.authed, 
+    name: name,
+    description: description,
+    inProject: inProject,
+    resources: resources,
+    posts: posts
+  });
 });
 router.get('/newproject', requireAuth, (req, res) => res.render('newproject', {title: 'New Project', authed:req.authed}));
-router.get('/project/:id/newresource', requireAuth, (req,res)=>res.render('newresource', {title: 'New Resource', authed:req.authed}))
+router.get('/project/:id/newresource', requireAuth, (req,res)=>res.render('newresource', {title: 'New Resource', authed:req.authed}));
+router.get('/project/:id/newpost', requireAuth, (req,res)=>res.render('newpost', {title: 'New Post', authed:req.authed}));
+router.get('/project/:id/newquestion', requireAuth, (req, res) => res.render('newquestion', {title:'New Question', authed: req.authed}))
+router.get('/project/:pid/resource/:id', async (req, res) => {
+  const {pid,id} = req.params;
+  const pname = await client.get('PROJECT_NAME_' + pid);
+  const title = await client.get('RESOURCE_TITLE_'+id);
+  const text = await client.get('RESOURCE_TEXT_'+id);
+  const author = await client.get('RESOURCE_AUTHOR_'+id);
+  //console.log(pname,title,text,author);
+  res.render('resource', {
+    title: `Project ${pname} - ${title}`,
+    authed: req.authed,
+    text: text,
+    author: author,
+    rtitle: title,
+    project: pname
+  });
+});
+router.get('/project/:pid/resource/:id', async (req, res) => {
+  const {pid,id} = req.params;
+  const pname = await client.get('PROJECT_NAME_' + pid);
+  const title = await client.get('RESOURCE_TITLE_'+id);
+  const text = await client.get('RESOURCE_TEXT_'+id);
+  const author = await client.get('RESOURCE_AUTHOR_'+id);
+  //console.log(pname,title,text,author);
+  res.render('resource', {
+    title: `Project ${pname} - ${title}`,
+    authed: req.authed,
+    text: text,
+    author: author,
+    rtitle: title,
+    project: pname
+  });
+});
+router.get('/project/:pid/post/:id', async (req, res) => {
+  const {pid,id} = req.params;
+  const pname = await client.get('PROJECT_NAME_' + pid);
+  const title = await client.get('POST_TITLE_'+id);
+  const text = await client.get('POST_TEXT_'+id);
+  const author = await client.get('POST_AUTHOR_'+id);
+  //console.log(pname,title,text,author);
+  const posts = [];
+  const postIds = await client.get('POST_REPLIES_'+id);
+  for (const postId of postIds) {
+    posts.push({
+      text: await client.get('REPLY_TEXT_'+postId),
+      author: await client.get('REPLY_AUTHOR_'+postId)
+    });
+  }
+  /*console.log({
+    title: `Project ${pname} - ${title}`,
+    authed: req.authed,
+    text: text,
+    author: author,
+    ptitle: title,
+    project: pname, 
+    posts: posts
+  });*/
+  res.render('post', {
+    title: `Project ${pname} - ${title}`,
+    authed: req.authed,
+    text: text,
+    author: author,
+    ptitle: title,
+    project: pname, 
+    posts: posts
+  });
+});
+
+// note: add explorer view for projects
+// also profile (descrption, username, points, etc.)
+
 module.exports = router;
