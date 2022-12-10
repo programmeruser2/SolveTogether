@@ -1,0 +1,12 @@
+extends layout 
+block append scripts
+  script(src='/static/js/newresource.js', defer='')
+block content
+  h1 New Resource
+  form#form
+    input(type='text', name='title', placeholder='Resource Title') 
+    br
+    textarea(form='form', name='text', placeholder='Resource Text')
+    br
+    input(type='submit', value='New Resource')
+  div#err-text

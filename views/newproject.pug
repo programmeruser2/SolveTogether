@@ -1,0 +1,12 @@
+extends layout 
+block append scripts
+  script(src='/static/js/newproject.js', defer='')
+block content
+  h1 New Project
+  form#form
+    input(type='text', name='name', placeholder='Project Name') 
+    br
+    textarea(form='form', name='description', placeholder='Description')
+    br
+    input(type='submit', value='New Project')
+  div#err-text

@@ -1,0 +1,12 @@
+extends layout 
+block append scripts
+  script(src='/static/js/signup.js', defer='')
+block content
+  h1 Signup
+  form#form
+    input(type='text', name='username', placeholder='Username') 
+    br
+    input(type='password', name='password', placeholder='Password') 
+    br
+    input(type='submit', value='Signup')
+  div#err-text

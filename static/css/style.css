@@ -1,0 +1,21 @@
+ul#header, ul#myprojects {
+  list-style-type: none;
+  /*text-align:center;*/
+  text-align:left;
+}
+/*h1 {
+  text-align:center;
+}*/
+a.navbar {
+  margin: 8px;
+}
+div#err-text {
+  color: red;
+}
+div#success-text {
+  color:green;
+}
+li.projectitem {
+  border: 1px solid black;
+  padding: 10px;
+}

@@ -1,0 +1,18 @@
+extends layout.pug
+block append scripts
+  script(src='/static/js/project.js', defer='')
+block content
+  h1 Project #{name}
+  p= description
+  br
+  if !inProject
+    button(onclick='joinProject()') Join Project
+  div#success-text
+  div#err-text
+
+  h2 Resources
+  a#newresource New Resource
+
+  h2 Questions
+
+  h2 Message Board

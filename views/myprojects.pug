@@ -1,0 +1,11 @@
+extends layout.pug
+block content
+  ul#myprojects
+    li
+      a(href='/newproject') Create a new project
+    each project in projects
+      li.projectitem
+        div 
+          a(href='/project/'+project.id) Project #{project.name}
+          p= project.description
+  

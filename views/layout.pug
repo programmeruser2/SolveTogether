@@ -1,0 +1,19 @@
+html
+  head
+    title SolveTogether - #{title}
+    block css
+      link(rel='stylesheet', href='https://latex.now.sh/style.css')
+      link(rel='stylesheet', href='/static/css/style.css')
+    block scripts
+      script(src='/static/js/api.js')
+  body 
+    // Header
+    ul#header
+      a.navbar(href='/') Home
+      if !authed
+        a.navbar(href='/login') Login
+        a.navbar(href='/signup') Sign Up
+      else
+        a.navbar(href='/myprojects') My Projects
+        a.navbar(href='/signout') Sign Out
+    block content
