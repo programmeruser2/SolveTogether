@@ -16,7 +16,7 @@ block content
   each post in posts
     p= post.text
     h6 By: 
-      a(href='/user/' + author)= author
+      a(href='/user/' + post.author)= post.author
     hr
   //h1 Test
   // Reply Box

@@ -152,7 +152,7 @@ api.openQuestion = async function(data) {
 }
 
 api.closeQuestion = async function(data) {
-  const res = await fetch('/api/createquestion', {
+  const res = await fetch('/api/closequestion', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
