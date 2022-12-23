@@ -244,7 +244,9 @@ router.get('/editprofile', requireAuth, async (req, res) => {
 
 // will work on this more tomorrow
 // also maybe add project tags/question tags/resource tags/post tags/user tags??? idk
+// probably not
 // possibly private messaging
+// on a second note, maybe message boards are enough (they probably are) 
 
 // also error handling
 module.exports = router;
