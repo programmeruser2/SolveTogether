@@ -1,9 +1,9 @@
 const form = document.getElementById('form');
 const errText = document.getElementById('err-text');
 const parts = location.href.split('/');
-parts.pop();
-parts.pop();
-const id = Number(parts.at(-1));
+//parts.pop();
+//parts.pop();
+const id = Number(parts.at(-1) == '' ? parts.at(-2) : parts.at(-1));
 if (form !== null) {
   form.addEventListener('submit', async e => {
     e.preventDefault();
