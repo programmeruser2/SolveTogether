@@ -98,8 +98,8 @@ api.newPost = async function(data) {
   }
 }
 
-api.newReply = async function(data) {
-  const res = await fetch('/api/replypost', {
+api.newReply = async function(data, type) {
+  const res = await fetch('/api/reply'+type, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -127,6 +127,44 @@ api.newQuestion = async function(data) {
     const parts = location.href.split('/');
     parts.pop();
     location.href = parts.join('/') + '/question/' + id;
+  } else {
+    throw Error('Failed to create a new question');
+  }
+}
+
+api.openQuestion = async function(data) {
+  const res = await fetch('/api/openquestion', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  //const {id} = await res.json();
+  if (res.ok) {
+    //const parts = location.href.split('/');
+    //parts.pop();
+    //location.href = parts.join('/') + '/question/' + id;
+    location.reload();
+  } else {
+    throw Error('Failed to open the question');
+  }
+}
+
+api.closeQuestion = async function(data) {
+  const res = await fetch('/api/createquestion', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  //const {id} = await res.json();
+  if (res.ok) {
+    //const parts = location.href.split('/');
+    //parts.pop();
+    //location.href = parts.join('/') + '/question/' + id;
+    location.reload();
   } else {
     throw Error('Failed to create a new question');
   }

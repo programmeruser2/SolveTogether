@@ -6,10 +6,13 @@ html
       link(rel='stylesheet', href='/static/css/style.css')
     block scripts
       script(src='/static/js/api.js')
+      script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
+      script(src='https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js', id='MathJax-script', async='')
   body 
     // Header
     ul#header
       a.navbar(href='/') Home
+      a.navbar(href='/projects') Projects
       if !authed
         a.navbar(href='/login') Login
         a.navbar(href='/signup') Sign Up

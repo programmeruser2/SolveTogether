@@ -11,7 +11,8 @@ block content
   div#err-text
 
   h2 Resources
-  a#newresource New Resource
+  if authed
+    a#newresource New Resource
   ul#resources
     each resource in resources
       li.resourceitem
@@ -19,10 +20,16 @@ block content
           a(href=resource.url) #{resource.title}
 
   h2 Questions
-  a#newquestion New Question
+  if authed
+    a#newquestion New Question
+  ul#questions
+    each question in questions
+      li.questionitem
+        a(href=question.url) #{question.title}
 
   h2 Message Board
-  a#newpost New Post
+  if authed
+    a#newpost New Post
   ul#posts
     each post in posts
       li.postitem

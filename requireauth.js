@@ -6,7 +6,11 @@ function requireAuth(req, res, next) {
   }
 }
 const setAuthed = (req, res, next) => {
-  req.authed = req.session.user !== undefined;
+  if (req.session === undefined) {
+    req.authed = false;
+  } else {
+    req.authed = req.session.user !== undefined;
+  }
   next();
 };
 module.exports={requireAuth,setAuthed};

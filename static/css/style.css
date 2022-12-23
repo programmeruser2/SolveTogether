@@ -19,3 +19,6 @@ li.projectitem {
   border: 1px solid black;
   padding: 10px;
 }
+p {
+  white-space: pre;
+}

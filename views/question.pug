@@ -1,9 +1,13 @@
 extends layout.pug
 block append scripts
-  script(src='/static/js/post.js', defer='')
+  script(src='/static/js/question.js', defer='')
 block content
   h1= project
-  h2= ptitle
+  h2= qtitle
+  p
+    b #{state ? "Open" : "Closed"}
+  if authed
+    button(onclick='toggle(!' + state + ')') #{state ? "Close question" : "Open question"}
   p= text
   h6 By: #{author}
   hr
@@ -17,7 +21,7 @@ block content
   if authed
     h3 Reply
     form#form
-      textarea(id='newpost-text', form='form', name='text', placeholder='Post Text')
+      textarea(id='newpos-text', form='form', name='text', placeholder='Post Text')
       br
       input(type='submit', value='New Post')
     div#err-text

@@ -64,6 +64,13 @@ User credentials:
 These correspond to PASSWORD_user -> hashed password
 */
 
+// Contribution points: (\/ [supposed to be a checkmark but wtv] DONE)
+// New project = 5 points (DONE)
+// Resource = 3 points (DONE)
+// Question = 2 points (DONE)
+// Message Board Post = 1 point(s)
+
+
 const argon2 = require('argon2');
 const Client = require('@replit/database');
 const client = new Client();
@@ -76,6 +83,12 @@ router.use(setAuthed);
 /*if (client.get('CURRENT_PROJECT_ID') == null) {
   client.set('CURRENT_PROJECT_ID', 0);
 }*/
+
+async function addPoints(user, amount) {
+  const points = await client.get('USER_CONTRIBUTION_POINTS_' + req.session.user);
+  await client.set('USER_CONTRIBUTION_POINTS_'+req.session.user, points+amount);
+}
+
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const hash = await client.get('PASSWORD_' + username);
@@ -98,6 +111,7 @@ router.post('/signup', async (req, res) => {
   const hash = await argon2.hash(password);
   await client.set('PASSWORD_' + username, hash);
   await client.set('USER_PROJECTS_' + username, []);
+  await client.set('USER_CONTRIBUTION_POINTS_' + username, 0);
   req.session.user = username;
   res.status(200).send({status:'OK'});
 });
@@ -117,6 +131,9 @@ router.post('/newproject', requireAuth, async (req, res) => {
   const projs = await client.get('USER_PROJECTS_'+req.session.user);
   projs.push(id);
   await client.set('USER_PROJECTS_'+req.session.user, projs);
+
+  // Contribution Points
+  addPoints(req.session.user, 5);
   
   res.status(200).send({status:'OK', id: id});
 });
@@ -167,6 +184,9 @@ router.post('/makeresource', requireAuth, async (req, res) => {
   const reses = await client.get('PROJECT_RESOURCES_'+projectId);
   reses.push(id);
   await client.set('PROJECT_RESOURCES_'+projectId, reses);
+
+  // Contribution Points
+  addPoints(req.session.user, 3);
   
   return res.status(200).send({status:'OK', id: id});
 });
@@ -188,6 +208,9 @@ router.post('/createpost', requireAuth, async (req, res) => {
   const reses = await client.get('PROJECT_MESSAGES_'+projectId);
   reses.push(id);
   await client.set('PROJECT_MESSAGES_'+projectId, reses);
+
+  // Contribution Points
+  addPoints(req.session.user, 1);
   
   return res.status(200).send({status:'OK', id: id});
 });
@@ -222,10 +245,14 @@ router.post('/createquestion', requireAuth, async (req, res) => {
   await client.set('QUESTION_TEXT_' + id, text);
   await client.set('QUESTION_AUTHOR_' + id, req.session.user);
   await client.set('QUESTION_REPLIES_'+id, []);
+  await client.set('QUESTION_STATE_'+id, true);
 
   const reses = await client.get('PROJECT_QUESTIONS_'+projectId);
   reses.push(id);
   await client.set('PROJECT_QUESTIONS_'+projectId, reses);
+
+  // Contribution Points
+  addPoints(req.session.user, 2);
   
   return res.status(200).send({status:'OK', id: id});
 });
@@ -239,9 +266,10 @@ router.post('/replyquestion', requireAuth, async (req, res) => {
   await client.set('REPLY_TEXT_' + id, text);
   await client.set('REPLY_AUTHOR_' + id, req.session.user);
 
-  const reses = await client.get('QUESTIONS_REPLIES_'+postId);
+  const reses = await client.get('QUESTION_REPLIES_'+postId);
   reses.push(id);
   await client.set('QUESTION_REPLIES_'+postId, reses);
+  //console.log(reses);
   
   return res.status(200).send({status:'OK'});
 });

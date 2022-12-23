@@ -10,19 +10,27 @@ if (form !== null) {
     const formData = new FormData(e.target);
     const data = {};
     formData.forEach((val, key) => data[key]=val);
+    const parts = location.href.split('/');
+    parts.pop();
+    parts.pop();
     data.postId = id;
     //console.log(data);
     try {
-      await api.newReply(data, 'post');
-      localStorage.setItem('DRAFT_POST_'+id, '');
+      await api.newReply(data, 'question');
+      localStorage.setItem('DRAFT_QUESTION_'+id, '');
     } catch (err) {
       errText.innerText = 'Failed to create a new reply';
     }
   });
 }
+function toggle(state) {
+  //const questionId = id;
+  if (state) api.openQuestion({questionId:id});
+  else api.closeQuestion({questionId:id});
+}
+
 const postText = document.getElementById('newpost-text');
-postText.value = localStorage.getItem('DRAFT_POST_'+id) || '';
-postText.addEventListener('input', e => {
-  //console.log(postText.value);
-  localStorage.setItem('DRAFT_POST_'+id, postText.value);
+postText.value = localStorage.getItem('DRAFT_QUESTION_'+id) || '';
+postText.addEventListener('oninput', e => {
+  localStorage.setItem('DRAFT_QUESTION_'+id, postText.value);
 });

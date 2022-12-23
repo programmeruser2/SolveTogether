@@ -67,6 +67,16 @@ router.get('/project/:id', async (req, res) => {
       url: '/project/'+id+'/post/'+post
     });
   }
+
+  const questionIds = await client.get('PROJECT_QUESTIONS_'+id);
+  const questions = [];
+  for (const question of questionIds) {
+    questions.push({
+      id: question,
+      title: await client.get('QUESTION_TITLE_'+question),
+      url: '/project/'+id+'/question/'+question
+    });
+  }
   
   //console.log(inProject);
   res.render('project', {
@@ -75,7 +85,8 @@ router.get('/project/:id', async (req, res) => {
     description: description,
     inProject: inProject,
     resources: resources,
-    posts: posts
+    posts: posts,
+    questions: questions
   });
 });
 router.get('/newproject', requireAuth, (req, res) => res.render('newproject', {title: 'New Project', authed:req.authed}));
@@ -148,8 +159,68 @@ router.get('/project/:pid/post/:id', async (req, res) => {
     posts: posts
   });
 });
+router.get('/project/:pid/question/:id', async (req, res) => {
+  const {pid,id} = req.params;
+  const pname = await client.get('PROJECT_NAME_' + pid);
+  const title = await client.get('QUESTION_TITLE_'+id);
+  const text = await client.get('QUESTION_TEXT_'+id);
+  const author = await client.get('QUESTION_AUTHOR_'+id);
+  //console.log(pname,title,text,author);
+  const posts = [];
+  const postIds = await client.get('QUESTION_REPLIES_'+id);
+  for (const postId of postIds) {
+    posts.push({
+      text: await client.get('REPLY_TEXT_'+postId),
+      author: await client.get('REPLY_AUTHOR_'+postId)
+    });
+  }
+  /*console.log({
+    title: `Project ${pname} - ${title}`,
+    authed: req.authed,
+    text: text,
+    author: author,
+    ptitle: title,
+    project: pname, 
+    posts: posts
+  });*/
+  const state = await client.get('QUESTION_STATE_'+id);
+  res.render('question', {
+    title: `Project ${pname} - ${title}`,
+    authed: req.authed,
+    text: text,
+    author: author,
+    qtitle: title,
+    project: pname, 
+    posts: posts,
+    state: state
+  });
+});
 
 // note: add explorer view for projects
+router.get('/projects', async (req,res) => {
+  //const ids = await client.get('USER_PROJECTS_'+req.session.user);
+  const maxid = await client.get('CURRENT_PROJECT_ID');
+  const projects = [];
+  for (let id = 0; id < maxid; ++id) {
+    projects.push({
+      id: id,
+      name: await client.get('PROJECT_NAME_'+id),
+      description: await client.get('PROJECT_DESC_'+id)
+    });
+  }
+  res.render('myprojects', {
+    projects: projects,
+    title: "Projects",
+    authed: req.authed
+  });
+});
 // also profile (descrption, username, points, etc.)
+// * profile page
+//   - profile display points
+//   - display username
+//   - display description
+//   - ...and more???
+// will work on this more tomorrow
+// also maybe add project tags/question tags/resource tags/post tags/user tags??? idk
 
 module.exports = router;
