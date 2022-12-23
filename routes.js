@@ -30,11 +30,18 @@ router.get('/myprojects', requireAuth, async (req,res) => {
 });
 router.get('/project/:id', async (req, res) => {
   const id = Number(req.params.id);
+  let exists = true;
   if (!(Number.isInteger(id) && id >= 0)) {
+    exists = false;
+  }
+  const name = await client.get('PROJECT_NAME_'+id);
+  if (name == null) {
+    exists = false;
+  }
+  if (!exists) {
     return res.status(404).render('404', {msg:'Project does not exist.'});
   }
-  const name=await client.get('PROJECT_NAME_'+id);
-  const description=await client.get('PROJECT_DESC_'+id);
+  const description = await client.get('PROJECT_DESC_'+id);
   let inProject = false;
   //console.log(await client.get('USER_PROJECTS_'+req.session.user));
   //console.log('before auth check');
@@ -73,7 +80,8 @@ router.get('/project/:id', async (req, res) => {
   for (const question of questionIds) {
     questions.push({
       id: question,
-      title: await client.get('QUESTION_TITLE_'+question),
+      title: await client.get('QUESTION_TITLE_' + question),
+      state: await client.get('QUESTION_STATE_' + question),
       url: '/project/'+id+'/question/'+question
     });
   }

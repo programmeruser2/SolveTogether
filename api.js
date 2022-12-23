@@ -85,8 +85,8 @@ router.use(setAuthed);
 }*/
 
 async function addPoints(user, amount) {
-  const points = await client.get('USER_CONTRIBUTION_POINTS_' + req.session.user);
-  await client.set('USER_CONTRIBUTION_POINTS_'+req.session.user, points+amount);
+  const points = await client.get('USER_CONTRIBUTION_POINTS_' + user);
+  await client.set('USER_CONTRIBUTION_POINTS_'+user, points+amount);
 }
 
 router.post('/login', async (req, res) => {
