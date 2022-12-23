@@ -1,0 +1,9 @@
+extends layout.pug
+block content
+  h1 
+    a#user-profile-link(href='/user/' + username)= username
+  h6 Contribution Points: 
+    b= points
+  p= description
+  if isUser
+    a(href='/editprofile') Edit Profile

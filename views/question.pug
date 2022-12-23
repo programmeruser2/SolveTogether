@@ -9,12 +9,14 @@ block content
   if authed
     button(onclick='toggle(!' + state + ')') #{state ? "Close question" : "Open question"}
   p= text
-  h6 By: #{author}
+  h6 By: 
+    a(href='/user/' + author)= author
   hr
   //h1 Test
   each post in posts
     p= post.text
-    h6 By: #{post.author}
+    h6 By: 
+      a(href='/user/' + author)= author
     hr
   //h1 Test
   // Reply Box

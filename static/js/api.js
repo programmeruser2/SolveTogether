@@ -169,3 +169,30 @@ api.closeQuestion = async function(data) {
     throw Error('Failed to create a new question');
   }
 }
+
+api.getDescription = async function(user, current = false) {
+  //console.log('pre-request');
+  const res = await fetch('/api/description/' + user + '?current=' + current.toString());
+  //console.log('post-request');
+  if (res.ok) {
+    const { description } = await res.json();
+    return description;
+  } else {
+    throw Error('Failed to get description');
+  }
+}
+api.updateDescription = async function(data) {
+  const res = await fetch('/api/updatedescription', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  
+  if (res.ok) {
+    location.href = '/myuser';  
+  } else {
+    throw Error('Failed to update description');
+  }
+}

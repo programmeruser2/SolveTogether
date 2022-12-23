@@ -3,4 +3,5 @@ block content
   h1= project
   h2= rtitle
   p= text
-  h6 By: #{author}
+  h6 By: 
+    a(href='/user/' + author)= author

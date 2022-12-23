@@ -5,12 +5,14 @@ block content
   h1= project
   h2= ptitle
   p= text
-  h6 By: #{author}
+  h6 By: 
+    a(href='/user/' + author)= author
   hr
   //h1 Test
   each post in posts
     p= post.text
-    h6 By: #{post.author}
+    h6 By: 
+      a(href='/user/' + post.author)= post.author
     hr
   //h1 Test
   // Reply Box

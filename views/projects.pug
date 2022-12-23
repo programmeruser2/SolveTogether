@@ -1,8 +1,9 @@
 extends layout.pug
 block content
   ul#projects
-    li
-      a(href='/newproject') Create a new project
+    if authed
+      li
+        a(href='/newproject') Create a new project
     each project in projects
       li.projectitem
         div 

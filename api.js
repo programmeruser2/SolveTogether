@@ -112,6 +112,7 @@ router.post('/signup', async (req, res) => {
   await client.set('PASSWORD_' + username, hash);
   await client.set('USER_PROJECTS_' + username, []);
   await client.set('USER_CONTRIBUTION_POINTS_' + username, 0);
+  await client.set('USER_DESCRIPTION_' + username, '');
   req.session.user = username;
   res.status(200).send({status:'OK'});
 });
@@ -283,5 +284,23 @@ router.post('/closequestion', requireAuth, async (req, res) => {
   await client.set('QUESTION_STATE_'+questionId, false);
   return res.status(200).send({status:'OK'});
 });
-
+router.get('/description/:user', async (req, res) => {
+  let user;
+  if (req.query.current === 'true') {
+    if (!req.authed) {
+      return res.status(403).send({error:'You are not logged in'});
+    } else {
+      user = req.session.username;
+    }
+  } else {
+    user = req.params.user;
+  }
+  const description = await client.get('USER_DESCRIPTION_' + user);
+  res.send({status:'OK', description});
+});
+router.post('/updatedescription', requireAuth, async (req, res) => {
+  const { description } = req.body;
+  await client.set('USER_DESCRIPTION_' + req.session.user, description);
+  res.send({status:'OK'});
+});
 module.exports = router;

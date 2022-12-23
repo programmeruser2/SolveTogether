@@ -220,7 +220,31 @@ router.get('/projects', async (req,res) => {
 //   - display username
 //   - display description
 //   - ...and more???
+router.get('/user/:username', async (req, res) => {  
+  const {username} = req.params;
+  if ((await client.get('PASSWORD_' + username)) === null) {
+    return res.status(404).render('404', {msg: `User "${username}" does not exist`})
+  }
+  const points = await client.get('USER_CONTRIBUTION_POINTS_' + username);
+  const description = await client.get('USER_DESCRIPTION_' + username);
+  res.render('profile', {
+    title: `User ${username}`,
+    username: username,
+    points: points,
+    description: description,
+    authed: req.authed,
+    isUser: username == req.session.user
+  });
+});
+router.get('/myuser', requireAuth, async (req, res) => res.redirect('/user/' + req.session.user));
+router.get('/editprofile', requireAuth, async (req, res) => {
+  res.render('editprofile', {title: 'Edit Profile', authed: req.authed});
+});
+
+
 // will work on this more tomorrow
 // also maybe add project tags/question tags/resource tags/post tags/user tags??? idk
+// possibly private messaging
 
+// also error handling
 module.exports = router;

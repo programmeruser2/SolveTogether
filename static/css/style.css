@@ -22,3 +22,6 @@ li.projectitem {
 p {
   white-space: pre;
 }
+a#user-profile-link {
+  text-decoration: none;
+}

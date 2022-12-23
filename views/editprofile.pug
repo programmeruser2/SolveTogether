@@ -1,0 +1,10 @@
+extends layout
+block append scripts
+  script(src='/static/js/editprofile.js', defer='')
+block content
+  h1 Edit Profile
+  button(onclick='reset()') Reset to Current Description
+  form#form
+    textarea#description(form='form', name='description', placeholder='Description')
+    input(type='submit')
+  div#err-text
