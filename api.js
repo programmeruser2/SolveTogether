@@ -68,7 +68,7 @@ These correspond to PASSWORD_user -> hashed password
 // New project = 5 points (DONE)
 // Resource = 3 points (DONE)
 // Question = 2 points (DONE)
-// Message Board Post = 1 point(s)
+// Message Board Post/reply = 1 point(s)
 
 
 const argon2 = require('argon2');
@@ -228,6 +228,8 @@ router.post('/replypost', requireAuth, async (req, res) => {
   const reses = await client.get('POST_REPLIES_'+postId);
   reses.push(id);
   await client.set('POST_REPLIES_'+postId, reses);
+
+  addPoints(req.session.user, 1);
   
   return res.status(200).send({status:'OK'});
 });
@@ -271,6 +273,8 @@ router.post('/replyquestion', requireAuth, async (req, res) => {
   reses.push(id);
   await client.set('QUESTION_REPLIES_'+postId, reses);
   //console.log(reses);
+
+  addPoints(req.session.user, 1);
   
   return res.status(200).send({status:'OK'});
 });
